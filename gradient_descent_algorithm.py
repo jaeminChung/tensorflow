@@ -6,7 +6,7 @@ m = len(X)
 
 W = tf.placeholder(tf.float32)
 
-hypothesis = tf.mul(W, X)
+hypothesis = tf.multiply(W, X)
 cost = tf.reduce_sum(tf.pow(hypothesis-Y, 2)) / m
 
 init = tf.initialize_all_variables()
