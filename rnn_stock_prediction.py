@@ -5,6 +5,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib
 import os
+import psycopg2
 
 tf.set_random_seed(777)  # reproducibility
 
@@ -13,6 +14,7 @@ if "DISPLAY" not in os.environ:
     matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
+
 
 
 def MinMaxScaler(data):
@@ -46,7 +48,12 @@ learning_rate = 0.01
 iterations = 500
 
 # Open, High, Low, Volume, Close
-xy = np.loadtxt('data-02-stock_daily.csv', delimiter=',')
+# ('postgresql://pi:skatks123@192.168.0.8:5432/finance')
+conn = psycopg2.connect("dbname='finance' user='pi' host='192.168.0.8' password='skatks123'")
+cur = conn.cursor()
+cur.execute("""SELECT 시가, 고가, 저가, 거래량, 종가 FROM 일별주가 WHERE 종목코드 = '035420' AND 거래일자 > '2017.01.01'""")
+xy = np.array(cur.fetchall(), dtype=np.int64)
+# xy = np.loadtxt('data-02-stock_daily.csv', delimiter=',')
 xy = xy[::-1]  # reverse order (chronically ordered)
 xy = MinMaxScaler(xy)
 x = xy
